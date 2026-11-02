@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         #if DEBUG
@@ -13,6 +14,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if UserDefaults.standard.object(forKey: OnboardingView.doneKey) == nil && VikeyCore.isAccessibilityTrusted() {
             UserDefaults.standard.set(true, forKey: OnboardingView.doneKey)
         }
+        #if !compiler(>=5.7)
+        StatusMenu.shared.install()
+        #endif
         AppState.shared.startIfPossible()
         _ = Updater.shared                     // starts Sparkle: daily update checks
         EmojiPicker.shared.install()

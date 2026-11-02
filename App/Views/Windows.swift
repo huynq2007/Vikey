@@ -23,7 +23,9 @@ final class HostedWindow<Content: View> {
     func show() {
         if window == nil {
             let host = NSHostingController(rootView: AnyView(content().environmentObject(AppState.shared)))
+            #if compiler(>=5.7)
             host.sizingOptions = []   // size is set once below; live content-size tracking loops in AppKit's constraint pass
+            #endif
             self.host = host
             let w = NSWindow(contentViewController: host)
             w.title = title
@@ -141,7 +143,7 @@ enum AboutPanel {
         let base: [NSAttributedString.Key: Any] = [.font: NSFont.systemFont(ofSize: 11), .foregroundColor: NSColor.secondaryLabelColor, .paragraphStyle: center]
         func add(_ text: String, link: String? = nil) {
             var attrs = base
-            if let link { attrs[.link] = URL(string: link) }
+            if let link = link { attrs[.link] = URL(string: link) }
             credits.append(NSAttributedString(string: text, attributes: attrs))
         }
         add("Tony Dinh\n")

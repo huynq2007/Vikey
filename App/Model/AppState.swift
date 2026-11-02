@@ -18,7 +18,8 @@ final class AppState: ObservableObject {
 
     private init() {
         NotificationCenter.default.addObserver(forName: .VikeyLanguageDidChange, object: nil, queue: .main) { [weak self] _ in
-            Task { @MainActor in self?.language = Int(VikeyCore.language()) }
+            let state = self
+            Task { @MainActor in state?.language = Int(VikeyCore.language()) }
         }
     }
 

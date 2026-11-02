@@ -42,3 +42,6 @@ targets:
         HEADER_SEARCH_PATHS: ["$(SRCROOT)/Engine", "$(SRCROOT)/Engine/platforms"]
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         COMBINE_HIDPI_IMAGES: YES
+        # Xcode 13.3 (macOS 12.3 SDK) lacks NS_SWIFT_SENDABLE, used by Sparkle's headers
+        OTHER_SWIFT_FLAGS: ["$(inherited)", "-Xcc", "-DNS_SWIFT_SENDABLE="]
+        GCC_PREPROCESSOR_DEFINITIONS: ["$(inherited)", "NS_SWIFT_SENDABLE="]

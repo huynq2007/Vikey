@@ -40,6 +40,7 @@ enum Preferences {
 }
 
 enum LaunchAtLogin {
+    #if compiler(>=5.7)
     static var isEnabled: Bool { SMAppService.mainApp.status == .enabled }
     static func set(_ on: Bool) {
         do {
@@ -48,4 +49,21 @@ enum LaunchAtLogin {
             NSLog("Vikey: launch at login change failed: \(error)")
         }
     }
+    #else
+    // Xcode 13's SDK has no SMAppService (macOS 13); call it through the Objective-C runtime.
+    private static var mainApp: NSObject? {
+        (NSClassFromString("SMAppService") as? NSObject.Type)?.value(forKey: "mainAppService") as? NSObject
+    }
+    static var isEnabled: Bool { (mainApp?.value(forKey: "status") as? Int) == 1 }   // SMAppServiceStatusEnabled
+    static func set(_ on: Bool) {
+        guard let service = mainApp else { return }
+        typealias Call = @convention(c) (NSObject, Selector, UnsafeMutablePointer<NSError?>?) -> Bool
+        let sel = NSSelectorFromString(on ? "registerAndReturnError:" : "unregisterAndReturnError:")
+        let call = unsafeBitCast(service.method(for: sel), to: Call.self)
+        var error: NSError?
+        if !call(service, sel, &error) {
+            NSLog("Vikey: launch at login change failed: \(String(describing: error))")
+        }
+    }
+    #endif
 }

@@ -169,7 +169,7 @@ final class EmojiPickerModel: ObservableObject {
 
     init() {
         observer = NotificationCenter.default.addObserver(forName: .VikeyLanguageDidChange, object: nil, queue: .main) { [weak self] _ in
-            guard let self else { return }
+            guard let self = self else { return }
             self.vietnamese = VikeyCore.language() == 1; self.search()
         }
     }

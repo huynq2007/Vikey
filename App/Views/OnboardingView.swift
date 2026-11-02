@@ -124,7 +124,11 @@ struct OnboardingView: View {
                 GridRow { telex("j", "nặng"); telex("z", "xoá dấu"); Color.clear.frame(width: 1, height: 1); Color.clear.frame(width: 1, height: 1) }
             }
             .padding(14)
+            #if compiler(>=5.7)
             .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 10))
+            #else
+            .background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 10))
+            #endif
         }
     }
 
